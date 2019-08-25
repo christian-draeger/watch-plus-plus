@@ -197,7 +197,7 @@ def render(d):
     if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and secs % 2 == 0:
         renderColon(d)
 
-    formatted_date = "{:02}.".format(days) + MONTH_STRING[months] + str(years)[2:]
+    formatted_date = "{:02}.".format(days) + MONTH_STRING[months - 1] + str(years)[2:]
     renderText(d, formatted_date, None)
     # renderText(d, NAME, None)
     render_battery(d, os.read_battery())
