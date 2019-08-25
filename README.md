@@ -11,6 +11,6 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 
 ## Controls
 * long press button in the lower left corner to switch into edit mode
-** allows to set hour, minute, second, day, month, year
+  * allows to set hour, minute, second, day, month, year
 * use upper right button to increment value (+)
 * use upper right button to decrement value (-)
