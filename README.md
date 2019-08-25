@@ -17,3 +17,11 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 
 ## Optional
 Rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
+
+OR
+
+navigate to the root of your card10 badge file system and set latest version of watch++ as default app by executing:
+
+```
+wget -O main.py https://raw.githubusercontent.com/christian-draeger/watch-plus-plus/master/__init__.py
+```
