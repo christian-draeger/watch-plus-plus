@@ -15,4 +15,5 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 * use upper right button to increment value (+)
 * use lower right button to decrement value (-)
 
+## Optional
 Rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
