@@ -138,7 +138,7 @@ def render_battery(d, v):
 def get_current_day():
     ltime = utime.localtime()
     wday = ltime[6]
-    return DAY_STRING[months]
+    return DAY_STRING[wday]
 
 def renderNum(d, num, x):
     drawGrid7Seg(d, x, 0, 7, DIGITS[num // 10], (255, 255, 255))
