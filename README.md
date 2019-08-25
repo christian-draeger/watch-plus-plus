@@ -14,3 +14,5 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
   * allows to set hour, minute, second, day, month, year
 * use upper right button to increment value (+)
 * use lower right button to decrement value (-)
+
+Rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
