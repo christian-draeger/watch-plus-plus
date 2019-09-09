@@ -13,6 +13,7 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 * Displays seconds as a bar at the bottom of the screen that become brighter the more seconds of a minute has been reached
 * Allows changing the time and date completely via buttons
 * Displays the Battery status of your card10-badge
+* Automatically adjust brightness of display to safe battery
 
 ## Controls
 * long press button in the lower left corner to switch into edit mode
