@@ -1,3 +1,5 @@
+![watch++](image.jpg)
+
 # watch++
 An adjustable clock with date and battery display for the [card10 badge](https://card10.badge.events.ccc.de/).
 You'll always find the latest revision at [Hatchery](https://badge.team/projects/watch)
