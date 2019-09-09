@@ -11,16 +11,16 @@ import os
 import utime
 
 
-def ceilDiv(a, b):
+def ceil_div(a, b):
     return (a + (b - 1)) // b
 
 
-def tipHeight(w):
-    return ceilDiv(w, 2) - 1
+def tip_height(w):
+    return ceil_div(w, 2) - 1
 
 
-def drawTip(d, x, y, w, c, invert=False, swapAxes=False):
-    h = tipHeight(w)
+def draw_tip(d, x, y, w, c, invert=False, swapAxes=False):
+    h = tip_height(w)
     for dy in range(h):
         for dx in range(dy + 1, w - 1 - dy):
             px = x + dx
@@ -30,69 +30,69 @@ def drawTip(d, x, y, w, c, invert=False, swapAxes=False):
             d.pixel(px, py, col=c)
 
 
-def drawSeg(d, x, y, w, h, c, swapAxes=False):
-    tip_h = tipHeight(w)
+def draw_seg(d, x, y, w, h, c, swapAxes=False):
+    tip_h = tip_height(w)
     body_h = h - 2 * tip_h
 
-    drawTip(d, x, y, w, c, invert=True, swapAxes=swapAxes)
+    draw_tip(d, x, y, w, c, invert=True, swapAxes=swapAxes)
 
-    px1, px2 = x, x + w
-    py1, py2 = y + tip_h, y + tip_h + body_h
+    px1, px2 = x, x + (w - 1)
+    py1, py2 = y + tip_h, y + tip_h + (body_h - 1)
     if swapAxes:
         px1, px2, py1, py2 = py1, py2, px1, px2
     d.rect(px1, py1, px2, py2, col=c)
 
-    drawTip(d, x, y + tip_h + body_h, w, c, invert=False, swapAxes=swapAxes)
+    draw_tip(d, x, y + tip_h + body_h, w, c, invert=False, swapAxes=swapAxes)
 
 
-def drawVSeg(d, x, y, w, l, c):
-    drawSeg(d, x, y, w, l, c)
+def draw_Vseg(d, x, y, w, l, c):
+    draw_seg(d, x, y, w, l, c)
 
 
-def drawHSeg(d, x, y, w, l, c):
-    drawSeg(d, y, x, w, l, c, swapAxes=True)
+def draw_Hseg(d, x, y, w, l, c):
+    draw_seg(d, y, x, w, l, c, swapAxes=True)
 
 
-def drawGridSeg(d, x, y, w, l, c, swapAxes=False):
+def draw_grid_seg(d, x, y, w, l, c, swapAxes=False):
     sw = w - 2
-    tip_h = tipHeight(sw)
+    tip_h = tip_height(sw)
 
     x = x * w
     y = y * w
     l = (l - 1) * w
-    drawSeg(d, x + 1, y + tip_h + 3, sw, l - 3, c, swapAxes=swapAxes)
+    draw_seg(d, x + 1, y + tip_h + 3, sw, l - 3, c, swapAxes=swapAxes)
 
 
-def drawGridVSeg(d, x, y, w, l, c):
-    drawGridSeg(d, x, y, w, l, c)
+def draw_grid_Vseg(d, x, y, w, l, c):
+    draw_grid_seg(d, x, y, w, l, c)
 
 
-def drawGridHSeg(d, x, y, w, l, c):
-    drawGridSeg(d, y, x, w, l, c, swapAxes=True)
+def draw_grid_Hseg(d, x, y, w, l, c):
+    draw_grid_seg(d, y, x, w, l, c, swapAxes=True)
 
 
-def drawGrid(d, x1, y1, x2, y2, w, c):
+def draw_grid(d, x1, y1, x2, y2, w, c):
     for x in range(x1 * w, x2 * w):
         for y in range(y1 * w, y2 * w):
             if x % w == 0 or x % w == w - 1 or y % w == 0 or y % w == w - 1:
                 d.pixel(x, y, col=c)
 
 
-def drawGrid7Seg(d, x, y, w, segs, c):
+def draw_grid_7seg(d, x, y, w, segs, c):
     if segs[0]:
-        drawGridHSeg(d, x, y, w, 4, c)
+        draw_grid_Hseg(d, x, y, w, 4, c)
     if segs[1]:
-        drawGridVSeg(d, x + 3, y, w, 4, c)
+        draw_grid_Vseg(d, x + 3, y, w, 4, c)
     if segs[2]:
-        drawGridVSeg(d, x + 3, y + 3, w, 4, c)
+        draw_grid_Vseg(d, x + 3, y + 3, w, 4, c)
     if segs[3]:
-        drawGridHSeg(d, x, y + 6, w, 4, c)
+        draw_grid_Hseg(d, x, y + 6, w, 4, c)
     if segs[4]:
-        drawGridVSeg(d, x, y + 3, w, 4, c)
+        draw_grid_Vseg(d, x, y + 3, w, 4, c)
     if segs[5]:
-        drawGridVSeg(d, x, y, w, 4, c)
+        draw_grid_Vseg(d, x, y, w, 4, c)
     if segs[6]:
-        drawGridHSeg(d, x, y + 3, w, 4, c)
+        draw_grid_Hseg(d, x, y + 3, w, 4, c)
 
 
 DIGITS = [
@@ -124,84 +124,71 @@ def get_bat_color(v):
     return BATTERY_COLOR_BAD
 
 
-def render_battery(d, v):
+def render_battery(display, v):
     c = get_bat_color(v)
     if not c:
         return
-    d.rect(140, 71, 155, 78, filled=True, col=c)
-    d.rect(155, 73, 157, 76, filled=True, col=c)
+    display.rect(140, 72, 155, 79, filled=True, col=c)
+    display.rect(155, 74, 157, 77, filled=True, col=c)
     if v < 4.0:
-        d.rect(151, 72, 154, 77, filled=True, col=[0, 0, 0])
+        display.rect(151, 73, 154, 78, filled=True, col=[0, 0, 0])
     if v < 3.8:
-        d.rect(146, 72, 151, 77, filled=True, col=[0, 0, 0])
+        display.rect(146, 73, 151, 78, filled=True, col=[0, 0, 0])
     if v < 3.6:
-        d.rect(141, 72, 146, 77, filled=True, col=[0, 0, 0])
+        display.rect(141, 73, 146, 78, filled=True, col=[0, 0, 0])
 
 
-def get_current_day():
-    ltime = utime.localtime()
-    wday = ltime[6]
-    return DAY_STRING[wday]
+def render_num(d, num, x):
+    draw_grid_7seg(d, x, 0, 7, DIGITS[num // 10], (255, 255, 255))
+    draw_grid_7seg(d, x + 5, 0, 7, DIGITS[num % 10], (255, 255, 255))
 
 
-def renderNum(d, num, x):
-    drawGrid7Seg(d, x, 0, 7, DIGITS[num // 10], (255, 255, 255))
-    drawGrid7Seg(d, x + 5, 0, 7, DIGITS[num % 10], (255, 255, 255))
+def render_colon(d):
+    draw_grid_Vseg(d, 11, 2, 7, 2, (255, 255, 255))
+    draw_grid_Vseg(d, 11, 4, 7, 2, (255, 255, 255))
 
 
-def renderColon(d):
-    drawGridVSeg(d, 11, 2, 7, 2, (255, 255, 255))
-    drawGridVSeg(d, 11, 4, 7, 2, (255, 255, 255))
-
-
-def renderText(d, text, blankidx=None):
+def render_text(d, text, blankidx=None):
     bs = bytearray(text)
 
-    if blankidx != None:
+    if blankidx is not None:
         bs[blankidx:blankidx + 1] = b'_'
     if MODE == DISPLAY:
         ltime = utime.localtime()
         wday = ltime[6]
-        d.print(DAY_STRING[wday] + bs.decode(), fg = (128, 128, 128), bg = None, posx = 0, posy = 7 * 8)
+        d.print(DAY_STRING[wday] + bs.decode(), fg=(128, 128, 128), bg=None, posx=0, posy=7 * 8)
     else:
         fg_color = (0, 255, 128) if MODE in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) else (0, 128, 128)
-        d.print(MODES[MODE], fg = fg_color, bg = None, posx = 0, posy = 7 * 8)
+        d.print(MODES[MODE], fg=fg_color, bg=None, posx=0, posy=7 * 8)
 
 
-def renderBar(d, num):
+def render_bar(d, num):
     d.rect(0, 72, 0 + num * 2, 80, col=(int(255 // 52) * num, int(255 // 52) * num, int(255 // 52) * num))
 
 
 def render(d):
     d.clear()
 
-    ltime = utime.localtime()
-    years = ltime[0]
-    months = ltime[1]
-    days = ltime[2]
-    hours = ltime[3]
-    mins = ltime[4]
-    secs = ltime[5]
+    year, month, mday, hour, min, sec, wday, yday = utime.localtime()
 
     if MODE == CHANGE_YEAR:
-        renderNum(d, years // 100, 1)
-        renderNum(d, years % 100, 13)
+        render_num(d, year // 100, 1)
+        render_num(d, year % 100, 13)
     elif MODE == CHANGE_MONTH:
-        renderNum(d, months, 13)
+        render_num(d, month, 13)
     elif MODE == CHANGE_DAY:
-        renderNum(d, days, 13)
+        render_num(d, mday, 13)
     else:
-        renderNum(d, hours, 1)
-        renderNum(d, mins, 13)
+        render_num(d, hour, 1)
+        render_num(d, min, 13)
 
-    if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and secs % 2 == 0:
-        renderColon(d)
+    if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and sec % 2 == 0:
+        render_colon(d)
 
-    formatted_date = "{:02}.".format(days) + MONTH_STRING[months - 1] + str(years)[2:]
-    renderText(d, formatted_date, None)
-    # renderText(d, NAME, None)
+    formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
+    render_text(d, formatted_date, None)
     render_battery(d, os.read_battery())
-    renderBar(d, secs)
+    render_bar(d, sec)
 
     d.update()
 
@@ -257,7 +244,7 @@ def modTime(yrs, mth, day, hrs, mns, sec):
     ltime = utime.localtime()
     new = utime.mktime(
         (ltime[0] + yrs, ltime[1] + mth, ltime[2] + day, ltime[3] + hrs, ltime[4] + mns, ltime[5] + sec, None, None))
-    utime.set_time(new + WORKAROUND_OFFSET)
+    utime.set_time(new)
 
 
 def ctrl_display(bs):
@@ -338,40 +325,6 @@ def ctrl_chg_day(bs):
         modTime(0, 0, -1, 0, 0, 0)
 
 
-WORKAROUND_OFFSET = None
-
-
-def detect_workaround_offset():
-    global WORKAROUND_OFFSET
-
-    old = utime.time()
-    utime.set_time(old)
-    new = utime.time()
-
-    WORKAROUND_OFFSET = old - new
-    utime.set_time(old + WORKAROUND_OFFSET)
-
-
-NAME = None
-FILENAME = 'nickname.txt'
-
-
-def load_nickname():
-    global NAME
-    if FILENAME in os.listdir('.'):
-        with open("nickname.txt", "rb") as f:
-            name = f.read().strip()
-    else:
-        name = b'no nick'
-
-    if len(name) > 7:
-        name = name[0:7]
-    else:
-        name = b' ' * (7 - len(name)) + name
-
-    NAME = name
-
-
 # MODE values
 DISPLAY = 0
 CHANGE_HOURS = 1
@@ -404,16 +357,12 @@ CTRL_FNS = {
 
 
 def main():
-    try:
-        detect_workaround_offset()
-        load_nickname()
-        with display.open() as d:
-            while True:
-                bs = checkButtons()
-                CTRL_FNS[MODE](bs)
-                render(d)
-    except KeyboardInterrupt:
-        pass
+    with display.open() as d:
+        while True:
+            bs = checkButtons()
+            CTRL_FNS[MODE](bs)
+            render(d)
+            utime.sleep_ms(200)
 
 
 main()
