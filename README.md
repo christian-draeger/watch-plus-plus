@@ -2,6 +2,9 @@
 An adjustable clock with date and battery display for the [card10 badge](https://card10.badge.events.ccc.de/).
 You'll always find the latest revision at [Hatchery](https://badge.team/projects/watch)
 
+### Recommended
+* Firmware >= 1.8
+
 ## Features
 * Displays time as a seven-segment display
 * Displays date including current weekday
@@ -14,15 +17,3 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
   * allows to set hour, minute, second, day, month, year
 * use upper right button to increment value (+)
 * use lower right button to decrement value (-)
-
-## Optional
-You can make **watch++** the default app that will be started after booting the card10.
-To do so rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
-
-OR
-
-set latest version of watch++ as default app by executing:
-
-```
-wget -O /Volumes/CARD10/main.py https://raw.githubusercontent.com/christian-draeger/watch-plus-plus/master/__init__.py
-```
