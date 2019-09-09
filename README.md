@@ -5,7 +5,7 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 ## Features
 * Displays time as a seven-segment display
 * Displays date including current weekday
-* Displays seconds as a bar at the bottom of the screen that become brighter the more seconds of a minute has been passed
+* Displays seconds as a bar at the bottom of the screen that become brighter the more seconds of a minute has been reached
 * Allows changing the time and date completely via buttons
 * Displays the Battery status of your card10-badge
 
@@ -16,7 +16,8 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
 * use lower right button to decrement value (-)
 
 ## Optional
-Rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
+You can make **watch++** the default app that will be started after booting the card10.
+To do so rename the [__init__.py](__init__.py) to `main.py` and drop it in the root folder of your card10 badge to use the digital clock as default app that is getting startet after your badge has been booted.
 
 OR
 
