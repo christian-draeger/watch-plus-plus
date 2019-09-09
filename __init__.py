@@ -9,6 +9,7 @@ import buttons
 import display
 import os
 import utime
+import light_sensor
 
 
 def ceil_div(a, b):
@@ -325,6 +326,25 @@ def ctrl_chg_day(bs):
         modTime(0, 0, -1, 0, 0, 0)
 
 
+def ctrl_backlight(d):
+    brightness = light_sensor.get_reading()
+    print('Brightness level is: {}'.format(brightness))
+    if brightness > 30:
+        d.backlight(100)
+    if brightness <= 30 & brightness > 25:
+        d.backlight(50)
+    if brightness <= 25 & brightness > 20:
+        d.backlight(40)
+    if brightness <= 20 & brightness > 18:
+        d.backlight(30)
+    if brightness <= 18 & brightness > 12:
+        d.backlight(15)
+    if brightness <= 12:
+        d.backlight(1)
+
+    d.update()
+
+
 # MODE values
 DISPLAY = 0
 CHANGE_HOURS = 1
@@ -357,10 +377,12 @@ CTRL_FNS = {
 
 
 def main():
+    light_sensor.start()
     with display.open() as d:
         while True:
             bs = checkButtons()
             CTRL_FNS[MODE](bs)
+            ctrl_backlight(d)
             render(d)
             utime.sleep_ms(200)
 
