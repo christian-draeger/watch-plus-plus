@@ -9,6 +9,14 @@ import buttons
 import display
 import os
 import utime
+import light_sensor
+
+
+def brightness():
+    light = light_sensor.get_reading()
+    display_brightness = int(light // 4) if light >= 4 else 1
+    display_brightness = 100 if light > 300 else display_brightness
+    return display_brightness
 
 
 def ceil_div(a, b):
@@ -168,6 +176,7 @@ def render_bar(d, num):
 
 def render(d):
     d.clear()
+    d.backlight(brightness())
 
     year, month, mday, hour, min, sec, wday, yday = utime.localtime()
 
