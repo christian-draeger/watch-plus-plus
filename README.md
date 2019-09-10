@@ -20,3 +20,16 @@ You'll always find the latest revision at [Hatchery](https://badge.team/projects
   * allows to set hour, minute, second, day, month, year
 * use upper right button to increment value (+)
 * use lower right button to decrement value (-)
+
+## Optional
+
+To run watch++ as the defaut app edit the main.py in the root folder of your card10 badge.
+Replace the line 
+
+```
+default_app = "apps/analog_clock/__init__.py"
+```
+with 
+```
+default_app = "apps/watch/__init__.py"
+```
