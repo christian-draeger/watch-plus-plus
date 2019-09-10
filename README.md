@@ -5,16 +5,18 @@ An adjustable clock with date and battery display for the [card10 badge](https:/
 You'll always find the latest revision at [Hatchery](https://badge.team/projects/watch)
 
 ### Recommended
-* Firmware >= 1.8
+* Firmware >= 1.9
 
 ## Features
 * Displays time as a seven-segment display
 * Displays date including current weekday
 * Displays seconds as a bar at the bottom of the screen that become brighter the more seconds of a minute has been reached
 * Allows changing the time and date completely via buttons
-* Automatically adjust brightness of display to safe battery
-* Displays the Battery status of your card10-badge
-* Display charging icon beneath battery indicator when charging 
+* Power-Management / Power-Safing
+    * Automatically adjust brightness of display to safe battery
+    * UI renders with 1FPS
+    * Displays the Battery status of your card10-badge
+    * Display charging icon beneath battery indicator when charging 
 
 ## Controls
 * long press button in the lower left corner to switch into edit mode
