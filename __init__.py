@@ -10,6 +10,7 @@ import display
 import os
 import utime
 import light_sensor
+import power
 
 
 def brightness():
@@ -146,6 +147,33 @@ def render_battery(display, v):
         display.rect(141, 73, 146, 78, filled=True, col=[0, 0, 0])
 
 
+def render_charging(display):
+    v_in = power.read_chargein_voltage()
+    if v_in > 4.0:
+        c = [255, 255, 255]
+        c_shade = [120, 120, 120]
+        display.pixel(134, 72, col=c)
+        display.pixel(135, 72, col=c_shade)
+        display.pixel(134, 73, col=c)
+        display.pixel(133, 73, col=c_shade)
+        display.pixel(134, 74, col=c)
+        display.pixel(133, 74, col=c)
+        display.pixel(133, 75, col=c)
+        display.pixel(134, 75, col=c)
+        display.pixel(135, 75, col=c)
+        display.pixel(136, 75, col=c_shade)
+        display.pixel(135, 76, col=c)
+        display.pixel(136, 76, col=c)
+        display.pixel(137, 76, col=c)
+        display.pixel(134, 76, col=c_shade)
+        display.pixel(136, 77, col=c)
+        display.pixel(137, 77, col=c)
+        display.pixel(136, 78, col=c)
+        display.pixel(137, 78, col=c_shade)
+        display.pixel(136, 79, col=c)
+        display.pixel(135, 79, col=c_shade)
+
+
 def render_num(d, num, x):
     draw_grid_7seg(d, x, 0, 7, DIGITS[num // 10], (255, 255, 255))
     draw_grid_7seg(d, x + 5, 0, 7, DIGITS[num % 10], (255, 255, 255))
@@ -176,7 +204,6 @@ def render_bar(d, num):
 
 def render(d):
     d.clear()
-    d.backlight(brightness())
 
     year, month, mday, hour, min, sec, wday, yday = utime.localtime()
 
@@ -197,6 +224,7 @@ def render(d):
     formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
     render_text(d, formatted_date, None)
     render_battery(d, os.read_battery())
+    render_charging(d)
     render_bar(d, sec)
 
     d.update()
@@ -334,6 +362,24 @@ def ctrl_chg_day(bs):
         modTime(0, 0, -1, 0, 0, 0)
 
 
+def ctrl_backlight(d):
+    brightness = light_sensor.get_reading()
+    if brightness > 30:
+        d.backlight(100)
+    if brightness <= 30 & brightness > 25:
+        d.backlight(50)
+    if brightness <= 25 & brightness > 20:
+        d.backlight(40)
+    if brightness <= 20 & brightness > 18:
+        d.backlight(30)
+    if brightness <= 18 & brightness > 12:
+        d.backlight(15)
+    if brightness <= 12:
+        d.backlight(1)
+
+    d.update()
+
+
 # MODE values
 DISPLAY = 0
 CHANGE_HOURS = 1
@@ -366,10 +412,12 @@ CTRL_FNS = {
 
 
 def main():
+    light_sensor.start()
     with display.open() as d:
         while True:
             bs = checkButtons()
             CTRL_FNS[MODE](bs)
+            ctrl_backlight(d)
             render(d)
             utime.sleep_ms(200)
 
