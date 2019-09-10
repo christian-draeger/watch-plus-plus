@@ -185,14 +185,14 @@ def render_text(d, text, blankidx=None):
     if MODE == DISPLAY:
         ltime = utime.localtime()
         wday = ltime[6]
-        d.print(DAY_STRING[wday] + bs.decode(), fg=(128, 128, 128), bg=None, posx=0, posy=54)
+        d.print(DAY_STRING[wday] + bs.decode(), fg=(128, 128, 128), bg=None, posx=5, posy=54)
     else:
         fg_color = (0, 255, 128) if MODE in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) else (0, 128, 128)
-        d.print(MODES[MODE], fg=fg_color, bg=None, posx=0, posy=7 * 8)
+        d.print(MODES[MODE], fg=fg_color, bg=None, posx=5, posy=54)
 
 
 def render_bar(d, num):
-    d.rect(0, 72, 0 + num * 2, 80, col=(int(255 // 52) * num, int(255 // 52) * num, int(255 // 52) * num))
+    d.rect(5, 72, 0 + num * 2, 80, col=(int(255 // 52) * num, int(255 // 52) * num, int(255 // 52) * num))
 
 
 def render(d):
