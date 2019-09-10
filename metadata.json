@@ -1,7 +1,7 @@
 {
   "name": "Watch++",
-  "description": "An adjustable digital clock with date and battery display.",
+  "description": "An adjustable digital clock with date, battery and charging display, as well as automatic adjustment of display brightness",
   "category": "wearable",
   "author": "collins",
-  "revision": 1
+  "revision": 7
 }
