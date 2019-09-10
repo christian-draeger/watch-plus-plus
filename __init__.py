@@ -195,32 +195,43 @@ def render_bar(d, num):
     d.rect(5, 72, 0 + num * 2, 80, col=(int(255 // 52) * num, int(255 // 52) * num, int(255 // 52) * num))
 
 
-def render(d):
-    d.clear()
+PREV_SECOND = 0
 
+
+def render(d):
     year, month, mday, hour, min, sec, wday, yday = utime.localtime()
 
-    if MODE == CHANGE_YEAR:
-        render_num(d, year // 100, 1)
-        render_num(d, year % 100, 13)
-    elif MODE == CHANGE_MONTH:
-        render_num(d, month, 13)
-    elif MODE == CHANGE_DAY:
-        render_num(d, mday, 13)
-    else:
-        render_num(d, hour, 1)
-        render_num(d, min, 13)
+    global PREV_SECOND
+    if PREV_SECOND < sec:
+        d.clear()
+        ctrl_backlight(d)
 
-    if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and sec % 2 == 0:
-        render_colon(d)
+        if MODE == CHANGE_YEAR:
+            render_num(d, year // 100, 1)
+            render_num(d, year % 100, 13)
+        elif MODE == CHANGE_MONTH:
+            render_num(d, month, 13)
+        elif MODE == CHANGE_DAY:
+            render_num(d, mday, 13)
+        else:
+            render_num(d, hour, 1)
+            render_num(d, min, 13)
 
-    formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
-    render_text(d, formatted_date, None)
-    render_battery(d, os.read_battery())
-    render_charging(d)
-    render_bar(d, sec)
+        if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and sec % 2 == 0:
+            render_colon(d)
 
-    d.update()
+        formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
+        render_text(d, formatted_date, None)
+        render_battery(d, os.read_battery())
+        render_charging(d)
+        render_bar(d, sec)
+
+        d.update()
+
+        if sec is 59:
+            PREV_SECOND = -1
+        else:
+            PREV_SECOND += 1
 
 
 BUTTON_SEL = 1 << 0
@@ -370,8 +381,6 @@ def ctrl_backlight(d):
     if brightness <= 12:
         d.backlight(1)
 
-    d.update()
-
 
 # MODE values
 DISPLAY = 0
@@ -410,9 +419,7 @@ def main():
         while True:
             bs = checkButtons()
             CTRL_FNS[MODE](bs)
-            ctrl_backlight(d)
             render(d)
-            utime.sleep_ms(200)
 
 
 main()
