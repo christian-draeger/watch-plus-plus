@@ -126,45 +126,49 @@ def get_bat_color(v):
     return BATTERY_COLOR_BAD
 
 
-def render_battery(display, v):
+def render_battery(display, pos_x=140, pos_y=72):
+    v = os.read_battery()
     c = get_bat_color(v)
+
     if not c:
         return
-    display.rect(140, 72, 155, 79, filled=True, col=c)
-    display.rect(155, 74, 157, 77, filled=True, col=c)
+    display.rect(pos_x, pos_y, pos_x + 15, pos_y + 7, filled=True, col=c)
+    display.rect(pos_x + 15, pos_y + 2, pos_x + 17, pos_y + 5, filled=True, col=c)
     if v < 4.0:
-        display.rect(151, 73, 154, 78, filled=True, col=[0, 0, 0])
+        display.rect(pos_x + 11, pos_y + 1, pos_x + 14, pos_y + 6, filled=True, col=[0, 0, 0])
     if v < 3.8:
-        display.rect(146, 73, 151, 78, filled=True, col=[0, 0, 0])
+        display.rect(pos_x + 6, pos_y + 1, pos_x + 11, pos_y + 6, filled=True, col=[0, 0, 0])
     if v < 3.6:
-        display.rect(141, 73, 146, 78, filled=True, col=[0, 0, 0])
+        display.rect(pos_x + 1, pos_y + 1, pos_x + 6, pos_y + 6, filled=True, col=[0, 0, 0])
+    render_charging(display, pos_x + 6, pos_y)
 
 
-def render_charging(display):
+def render_charging(display, pos_x, pos_y):
     v_in = power.read_chargein_voltage()
     if v_in > 4.0:
-        c = [255, 255, 255]
+        c = [0, 0, 0]
         c_shade = [120, 120, 120]
-        display.pixel(134, 72, col=c)
-        display.pixel(135, 72, col=c_shade)
-        display.pixel(134, 73, col=c)
-        display.pixel(133, 73, col=c_shade)
-        display.pixel(134, 74, col=c)
-        display.pixel(133, 74, col=c)
-        display.pixel(133, 75, col=c)
-        display.pixel(134, 75, col=c)
-        display.pixel(135, 75, col=c)
-        display.pixel(136, 75, col=c_shade)
-        display.pixel(135, 76, col=c)
-        display.pixel(136, 76, col=c)
-        display.pixel(137, 76, col=c)
-        display.pixel(134, 76, col=c_shade)
-        display.pixel(136, 77, col=c)
-        display.pixel(137, 77, col=c)
-        display.pixel(136, 78, col=c)
-        display.pixel(137, 78, col=c_shade)
-        display.pixel(136, 79, col=c)
-        display.pixel(135, 79, col=c_shade)
+        display.pixel(pos_x + 1, pos_y, col=c)
+        display.pixel(pos_x + 1, pos_y, col=c)
+        display.pixel(pos_x + 2, pos_y, col=c_shade)
+        display.pixel(pos_x + 1, pos_y + 1, col=c)
+        display.pixel(pos_x, pos_y + 1, col=c_shade)
+        display.pixel(pos_x + 1, pos_y + 2, col=c)
+        display.pixel(pos_x, pos_y + 2, col=c)
+        display.pixel(pos_x, pos_y + 3, col=c)
+        display.pixel(pos_x + 1, pos_y + 3, col=c)
+        display.pixel(pos_x + 2, pos_y + 3, col=c)
+        display.pixel(pos_x + 3, pos_y + 3, col=c_shade)
+        display.pixel(pos_x + 2, pos_y + 4, col=c)
+        display.pixel(pos_x + 3, pos_y + 4, col=c)
+        display.pixel(pos_x + 4, pos_y + 4, col=c)
+        display.pixel(pos_x + 1, pos_y + 4, col=c_shade)
+        display.pixel(pos_x + 3, pos_y + 5, col=c)
+        display.pixel(pos_x + 4, pos_y + 5, col=c)
+        display.pixel(pos_x + 3, pos_y + 6, col=c)
+        display.pixel(pos_x + 4, pos_y + 6, col=c_shade)
+        display.pixel(pos_x + 3, pos_y + 7, col=c)
+        display.pixel(pos_x + 2, pos_y + 7, col=c_shade)
 
 
 def render_num(d, num, x):
@@ -195,39 +199,42 @@ def render_bar(d, num):
     d.rect(5, 72, 0 + num * 2, 80, col=(int(255 // 52) * num, int(255 // 52) * num, int(255 // 52) * num))
 
 
+def render(d):
+    year, month, mday, hour, min, sec, wday, yday = utime.localtime()
+    d.clear()
+    ctrl_backlight(d)
+
+    if MODE == CHANGE_YEAR:
+        render_num(d, year // 100, 1)
+        render_num(d, year % 100, 13)
+    elif MODE == CHANGE_MONTH:
+        render_num(d, month, 13)
+    elif MODE == CHANGE_DAY:
+        render_num(d, mday, 13)
+    else:
+        render_num(d, hour, 1)
+        render_num(d, min, 13)
+
+    if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and sec % 2 == 0:
+        render_colon(d)
+
+    formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
+    render_text(d, formatted_date, None)
+    render_battery(d)
+    render_bar(d, sec)
+
+    d.update()
+
+
 PREV_SECOND = 0
 
 
-def render(d):
-    year, month, mday, hour, min, sec, wday, yday = utime.localtime()
-
+def render_every_second(display):
+    t = utime.localtime()
+    sec = t[5]
     global PREV_SECOND
     if PREV_SECOND < sec:
-        d.clear()
-        ctrl_backlight(d)
-
-        if MODE == CHANGE_YEAR:
-            render_num(d, year // 100, 1)
-            render_num(d, year % 100, 13)
-        elif MODE == CHANGE_MONTH:
-            render_num(d, month, 13)
-        elif MODE == CHANGE_DAY:
-            render_num(d, mday, 13)
-        else:
-            render_num(d, hour, 1)
-            render_num(d, min, 13)
-
-        if MODE not in (CHANGE_YEAR, CHANGE_MONTH, CHANGE_DAY) and sec % 2 == 0:
-            render_colon(d)
-
-        formatted_date = "{:02}.".format(mday) + MONTH_STRING[month - 1] + str(year)[2:]
-        render_text(d, formatted_date, None)
-        render_battery(d, os.read_battery())
-        render_charging(d)
-        render_bar(d, sec)
-
-        d.update()
-
+        render(display)
         if sec is 59:
             PREV_SECOND = -1
         else:
@@ -246,7 +253,7 @@ button_up_time = 0
 button_down_time = 0
 
 
-def checkButtons():
+def check_buttons():
     global pressed_prev, button_sel_time, button_up_time, button_down_time
 
     t = utime.time()
@@ -367,19 +374,10 @@ def ctrl_chg_day(bs):
 
 
 def ctrl_backlight(d):
-    brightness = light_sensor.get_reading()
-    if brightness > 30:
-        d.backlight(100)
-    if brightness <= 30 & brightness > 25:
-        d.backlight(50)
-    if brightness <= 25 & brightness > 20:
-        d.backlight(40)
-    if brightness <= 20 & brightness > 18:
-        d.backlight(30)
-    if brightness <= 18 & brightness > 12:
-        d.backlight(15)
-    if brightness <= 12:
-        d.backlight(1)
+    light = light_sensor.get_reading()
+    display_brightness = int(light // 4) if light >= 4 else 1
+    display_brightness = 100 if light > 300 else display_brightness
+    d.backlight(display_brightness)
 
 
 # MODE values
@@ -417,9 +415,12 @@ def main():
     light_sensor.start()
     with display.open() as d:
         while True:
-            bs = checkButtons()
+            bs = check_buttons()
             CTRL_FNS[MODE](bs)
-            render(d)
+            if MODE == DISPLAY:
+                render_every_second(d)
+            else:
+                render(d)
 
 
 main()
